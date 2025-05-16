@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 public static class RequestManager
 {
     public const string DEFAULT_URL = "https://api.wesleydegraaf.com/GDVNet/";
-    public static async Task<(bool succes, O data)> SendRequestAsync<T, O>(string url, T requestData)
+    public static async Task<O> SendRequestAsync<T, O>(string url, T requestData) where O : class
     {
         WWWForm form = new WWWForm();
         form.AddField("request", JsonUtility.ToJson(requestData));
@@ -24,11 +24,11 @@ public static class RequestManager
             {
                 Debug.Log(www.downloadHandler.text);
                 O data = JsonUtility.FromJson<O>(www.downloadHandler.text);
-                return (true,  data);
+                return data;
             }
         }
 
-        return default;  
+        return null;  
     }
 }
 

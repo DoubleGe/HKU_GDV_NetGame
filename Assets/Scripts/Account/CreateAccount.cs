@@ -33,19 +33,19 @@ public class CreateAccount : MonoBehaviour
         DateTime birthDay = new DateTime(year, month, day);
 
         CreateAccountRequest createAccountRequest = new CreateAccountRequest(emailInput.text, passwordInput.text, nickNameInput.text, birthDay);
-        (bool succes, Response data) resp = await RequestManager.SendRequestAsync<CreateAccountRequest, Response>(RequestManager.DEFAULT_URL + "CreateUser.php", createAccountRequest);
+        Response resp = await RequestManager.SendRequestAsync<CreateAccountRequest, Response>(RequestManager.DEFAULT_URL + "CreateUser.php", createAccountRequest);
 
         //FAILED
-        if (resp.succes == false) return;
+        if (resp == null) return;
 
-        if (resp.data.status == "OK")
+        if (resp.status == "OK")
         {
-            Debug.Log(resp.data.customMessage);
+            Debug.Log(resp.customMessage);
         }
         else
         {
             //FAILED
-            Debug.Log(resp.data.customMessage);
+            Debug.Log(resp.customMessage);
         }
 
         createButton.interactable = true;

@@ -6,21 +6,21 @@ public class ServerLogin : MonoBehaviour
     {
         ServerLoginRequest serverLoginRequest = new ServerLoginRequest(2, "asfdgjkl");
 
-        (bool succes, ServerLoginResponse data) resp = await RequestManager.SendRequestAsync<ServerLoginRequest, ServerLoginResponse>(RequestManager.DEFAULT_URL + "ServerLogin.php", serverLoginRequest);
+       ServerLoginResponse resp = await RequestManager.SendRequestAsync<ServerLoginRequest, ServerLoginResponse>(RequestManager.DEFAULT_URL + "ServerLogin.php", serverLoginRequest);
 
-        if (resp.succes == false) return;
+        if (resp == null) return;
 
-        if (resp.data.status == "OK")
+        if (resp.status == "OK")
         {
-            ServerGlobalData.sessionID = resp.data.sessionID;
-            Debug.Log(resp.data.sessionID);
+            ServerGlobalData.sessionID = resp.sessionID;
+            Debug.Log(resp.sessionID);
 
             gameObject.SetActive(false);
         }
         else
         {
             //FAILED
-            Debug.Log(resp.data.customMessage);
+            Debug.Log(resp.customMessage);
         }
 
     }

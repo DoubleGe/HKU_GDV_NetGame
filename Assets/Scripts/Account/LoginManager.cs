@@ -22,22 +22,22 @@ public class LoginManager : MonoBehaviour
         string password = passwordInput.text;
 
         LoginRequest loginRequest = new LoginRequest(email, password);
-        (bool succes, LoginResponse data) resp = await RequestManager.SendRequestAsync<LoginRequest, LoginResponse>(RequestManager.DEFAULT_URL + "UserLogin.php", loginRequest);
+        LoginResponse resp = await RequestManager.SendRequestAsync<LoginRequest, LoginResponse>(RequestManager.DEFAULT_URL + "UserLogin.php", loginRequest);
 
         //FAILED
-        if (resp.succes == false) return;
+        if (resp == null) return;
 
-        if(resp.data.status == "OK")
+        if(resp.status == "OK")
         {
-            UserGlobalData.sessionID = resp.data.sessionID;
-            Debug.Log(resp.data.sessionID);
+            UserGlobalData.sessionID = resp.sessionID;
+            Debug.Log(resp.sessionID);
 
             gameObject.SetActive(false);
         }
         else
         {
             //FAILED
-            Debug.Log(resp.data.customMessage);
+            Debug.Log(resp.customMessage);
         }
 
         signInButton.interactable = true;
