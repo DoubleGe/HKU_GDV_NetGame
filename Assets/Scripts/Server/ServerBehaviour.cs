@@ -100,6 +100,7 @@ namespace NetGame.Server
         {
             packetHandlers = new Dictionary<byte, PacketHandler>
             {
+                { (byte)ClientNetPacket.SEND_LOGIN, ServerHandle.GetLogin },
                 { (byte)ClientNetPacket.TEMP_SEND_KEY, ServerHandle.GetKey},
             };
         }

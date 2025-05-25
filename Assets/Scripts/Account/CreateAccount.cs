@@ -1,3 +1,4 @@
+using NetGame.Server;
 using System;
 using System.Data;
 using TMPro;
@@ -31,6 +32,8 @@ public class CreateAccount : MonoBehaviour
         goBackButton.interactable = false;
 
         DateTime birthDay = new DateTime(year, month, day);
+
+
 
         CreateAccountRequest createAccountRequest = new CreateAccountRequest(emailInput.text, passwordInput.text, nickNameInput.text, birthDay);
         Response resp = await RequestManager.SendRequestAsync<CreateAccountRequest, Response>(RequestManager.DEFAULT_URL + "CreateUser.php", createAccountRequest);

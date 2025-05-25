@@ -4,43 +4,48 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public static class RequestManager
+namespace NetGame.Server
 {
-    public const string DEFAULT_URL = "https://api.wesleydegraaf.com/GDVNet/";
-    public static async Task<O> SendRequestAsync<T, O>(string url, T requestData) where O : class
+    internal static class RequestManager
     {
-        WWWForm form = new WWWForm();
-        form.AddField("request", JsonUtility.ToJson(requestData));
-
-        using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+        public const string DEFAULT_URL = "https://api.wesleydegraaf.com/GDVNet/";
+        public static async Task<O> SendRequestAsync<T, O>(string url, T requestData) where O : class
         {
-            await www.SendWebRequest();
+            WWWForm form = new WWWForm();
+            form.AddField("request", JsonUtility.ToJson(requestData));
+            Debug.Log(JsonUtility.ToJson(requestData));
+            using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+            {
+                await www.SendWebRequest();
 
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log(www.error);
+                if (www.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(www.error);
+                }
+                else
+                {
+                    Debug.Log(www.downloadHandler.text);
+                    O data = JsonUtility.FromJson<O>(www.downloadHandler.text);
+                    return data;
+                }
             }
-            else
-            {
-                Debug.Log(www.downloadHandler.text);
-                O data = JsonUtility.FromJson<O>(www.downloadHandler.text);
-                return data;
-            }
+
+            return null;
         }
-
-        return null;  
     }
-}
 
-[System.Serializable]
-public class Request
-{
-    public string SessionID => UserGlobalData.sessionID;
-}
+    [System.Serializable]
+    internal class Request
+    {
+        public string SessionID;
 
-[System.Serializable]
-public class Response
-{
-    public string status;
-    public string customMessage;
+        public Request(string sessionID) => SessionID = sessionID;
+    }
+
+    [System.Serializable]
+    internal class Response
+    {
+        public string status;
+        public string customMessage;
+    }
 }

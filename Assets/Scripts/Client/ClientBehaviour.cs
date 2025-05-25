@@ -63,9 +63,11 @@ namespace NetGame.Client
             }
         }
 
-        public DataStreamWriter StartNewStream()
+        public DataStreamWriter StartNewStream(ClientNetPacket netPacket)
         {
             netDriver.BeginSend(netConnection, out var writer);
+            writer.WriteByte((byte)netPacket);
+
             return writer;
         }
 
@@ -78,8 +80,11 @@ namespace NetGame.Client
         {
             packetHandlers = new Dictionary<byte, PacketHandler>
             {
+                { (byte)ServerNetPacket.SEND_LOGIN_RESULT, ClientHandle.GetLoginResult },
+
+
                 { (byte)ServerNetPacket.TEMP_SEND_NUMBER, ClientHandle.ReadInt},
-                { (byte) ServerNetPacket.TEMP_SEND_POSITION, ClientHandle.ReadInt },
+                { (byte) ServerNetPacket.TEMP_SEND_POSITION, ClientHandle.GetPosition },
                 { (byte) ServerNetPacket.TEMP_SEND_KEYSTRING, ClientHandle.GetKey },
             };
         }

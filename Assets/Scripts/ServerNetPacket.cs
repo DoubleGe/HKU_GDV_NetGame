@@ -2,12 +2,18 @@ using UnityEngine;
 
 public enum ServerNetPacket
 {
-   TEMP_SEND_NUMBER = 1,
-   TEMP_SEND_POSITION = 2,
-   TEMP_SEND_KEYSTRING = 3
+   SEND_LOGIN_RESULT = 1,
+
+  
+   TEMP_SEND_NUMBER = 2,
+   TEMP_SEND_POSITION = 3,
+   TEMP_SEND_KEYSTRING = 4
 }
 
 public enum ClientNetPacket
 {
-    TEMP_SEND_KEY = 1
+    SEND_LOGIN = 1,
+
+
+    TEMP_SEND_KEY = 2
 }
