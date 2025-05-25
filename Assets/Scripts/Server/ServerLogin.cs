@@ -15,9 +15,8 @@ namespace NetGame.Server
             if (resp.status == "OK")
             {
                 ServerGlobalData.sessionID = resp.sessionID;
-                Debug.Log(resp.sessionID);
 
-                SendTempScore();
+                Invoke("SendTempScore", 1f);
                 gameObject.SetActive(false);
             }
             else
@@ -49,7 +48,7 @@ namespace NetGame.Server
         //TEMP LOCATION
         private async void SendTempScore()
         {
-            SendScoreRequest sendScoreRequest = new SendScoreRequest(1, 100, ServerGlobalData.sessionID);
+            SendScoreRequest sendScoreRequest = new SendScoreRequest(1, 100, ServerGlobalData.clients[0].UID);
             Debug.Log(sendScoreRequest.SessionID);
 
             Response resp = await RequestManager.SendRequestAsync<SendScoreRequest, Response>(RequestManager.DEFAULT_URL + "AddScore.php", sendScoreRequest);
@@ -74,8 +73,9 @@ namespace NetGame.Server
         {
             public int gameID;
             public int score;
+            public int UID;
 
-            public SendScoreRequest(int gameID, int score, string sessionID) : base (sessionID)
+            public SendScoreRequest(int gameID, int score, int UserID) : base()
             {
                 this.gameID = gameID;
                 this.score = score;

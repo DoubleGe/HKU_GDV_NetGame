@@ -39,7 +39,7 @@ namespace NetGame.Server
     {
         public string SessionID;
 
-        public Request(string sessionID) => SessionID = sessionID;
+        public Request() => SessionID = ServerGlobalData.sessionID;
     }
 
     [System.Serializable]

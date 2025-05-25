@@ -45,7 +45,7 @@ namespace NetGame.Server
         public string email;
         public string password;
 
-        public LoginRequest(string email, string password) : base(ServerGlobalData.sessionID)
+        public LoginRequest(string email, string password) : base()
         {
             this.email = email;
             this.password = password;
