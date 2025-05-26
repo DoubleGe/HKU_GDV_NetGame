@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
@@ -22,9 +23,10 @@ namespace NetGame.Client
             {
                 string nickname =  reader.ReadFixedString32().ToString();
                 int score = reader.ReadInt();
-                long dateTicks = reader.ReadLong();
+                string dateString = reader.ReadFixedString32().ToString();
 
-                ScoreInfo scoreInfo = new ScoreInfo(nickname, score, new System.DateTime(dateTicks));
+                ScoreInfo scoreInfo = new ScoreInfo(nickname, score, dateString);
+                playerScores.Add(scoreInfo);
             }
 
             ScoreDisplay.Instance.ShowScore(playerScores, scoreType);

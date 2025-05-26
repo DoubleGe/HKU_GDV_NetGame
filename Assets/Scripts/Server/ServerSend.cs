@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
@@ -21,6 +22,12 @@ namespace NetGame.Server
 
         public static void SendScoreData(List<ScoreInfo> score, ScoreType scoreType, int client)
         {
+            if (score == null)
+            {
+                Debug.LogError("Scores is null!");
+                return;
+            }
+
             DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
             writer.WriteByte((byte)ServerNetPacket.SEND_SCORE);
 
@@ -30,9 +37,11 @@ namespace NetGame.Server
             for (int i = 0; i < score.Count; i++)
             {
                 ScoreInfo scoreInfo = score[i];
-                writer.WriteFixedString32(scoreInfo.nickname);
+                writer.WriteFixedString64(scoreInfo.nickname);
                 writer.WriteInt(scoreInfo.score);
-                writer.WriteLong(scoreInfo.date.Ticks);
+
+                DateTime date = DateTime.Parse(scoreInfo.date);
+                writer.WriteFixedString32(date.ToString("HH:mm dd-MM-yyyy"));
             }
 
             ServerBehaviour.Instance.EndStream(writer);

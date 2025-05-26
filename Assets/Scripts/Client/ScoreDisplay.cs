@@ -19,7 +19,7 @@ namespace NetGame.Client
             string scoreText = "";
             for (int i = 0; i < scores.Count; i++)
             {
-                scoreText += scores.ToString() + "\n";
+                scoreText += scores[i].ToString() + "\n";
             }
 
             editScore.text = scoreText;
@@ -28,13 +28,15 @@ namespace NetGame.Client
         }
     }
 }
+
+[System.Serializable]
 public class ScoreInfo
 {
     public string nickname;
     public int score;
-    public DateTime date;
+    public string date;
 
-   public ScoreInfo(string nickname, int score, DateTime date)
+   public ScoreInfo(string nickname, int score, string date)
     {
         this.nickname = nickname;
         this.score = score;
@@ -43,6 +45,6 @@ public class ScoreInfo
 
     public override string ToString()
     {
-        return nickname + score + date.ToString("dd-MM-yyyy");
+        return $"{nickname} {score} - {date}";
     }
 }

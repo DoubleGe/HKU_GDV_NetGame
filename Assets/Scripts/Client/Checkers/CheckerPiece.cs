@@ -10,22 +10,23 @@ public class CheckerPiece : MonoBehaviour
 
     public void InitPiece(bool isKing)
     {
-
+        this.isKing = isKing;
     }
 
     private void OnMouseDown()
     {
+        Debug.Log("DOWN");
         prevPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0; 
+        mousePosition.z = 0;
         offset = transform.position - mousePosition;
     }
 
     private void OnMouseDrag()
     {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0; 
+        mousePosition.z = 0;
         transform.position = mousePosition + offset;
     }
 
@@ -36,11 +37,4 @@ public class CheckerPiece : MonoBehaviour
 
         CheckersBoard.Instance.GetCheckerBoard()[boardPos.x, boardPos.y].SetPiece(this, true);
     }
-}
-
-[System.Serializable]
-public class PieceData
-{
-    public char refChar;
-    public CheckerPiece piece;
 }
