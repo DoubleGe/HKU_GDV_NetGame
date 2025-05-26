@@ -16,15 +16,5 @@ namespace NetGame.Client
 
             ClientBehaviour.Instance.EndStream(writer);
         }
-
-        public static void SendKey(KeyCode key)
-        {
-            DataStreamWriter writer = ClientBehaviour.Instance.StartNewStream(ClientNetPacket.TEMP_SEND_KEY);
-
-            //Data
-            writer.WriteInt((int)key);
-
-            ClientBehaviour.Instance.EndStream(writer);
-        }
     }
 }

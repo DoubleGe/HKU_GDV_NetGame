@@ -18,7 +18,6 @@ namespace NetGame.Server
 
             if (resp.status == "OK")
             {
-                Debug.Log("SERVER: " + resp.UID);
                 ServerGlobalData.AddClient(client, resp.UID);
                 ServerSend.SendLoginResult(true, client);
             }
@@ -28,13 +27,6 @@ namespace NetGame.Server
                 Debug.Log("SERVER: " + resp.customMessage);
                 ServerSend.SendLoginResult(false, client);
             }
-        }
-
-        public static void GetKey(DataStreamReader reader, int client)
-        {
-            KeyCode key = (KeyCode)reader.ReadInt();
-
-            ServerSend.SendKeyString(key.ToString(), client);
         }
     }
 

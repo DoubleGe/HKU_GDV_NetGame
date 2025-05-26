@@ -16,7 +16,7 @@ namespace NetGame.Server
             {
                 ServerGlobalData.sessionID = resp.sessionID;
 
-                Invoke("SendTempScore", 1f);
+                //Invoke("SendTempScore", 1f);
                 gameObject.SetActive(false);
             }
             else

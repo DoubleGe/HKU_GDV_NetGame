@@ -58,8 +58,6 @@ namespace NetGame.Server
             {
                 netConnection.Add(c);
                 Debug.Log("SERVER: Accepted a connection.");
-
-                ServerSend.SendInt(1000, netConnection.Length - 1);
             }
 
             for (int i = 0; i < netConnection.Length; i++)
@@ -71,7 +69,6 @@ namespace NetGame.Server
                     if (cmd == NetworkEvent.Type.Data)
                     {
                         byte packetID = stream.ReadByte();
-                        Debug.Log($"SERVER: Got packet: {packetID}. from a client.");
 
                         packetHandlers[packetID]?.Invoke(stream, i);
                     }
@@ -101,7 +98,6 @@ namespace NetGame.Server
             packetHandlers = new Dictionary<byte, PacketHandler>
             {
                 { (byte)ClientNetPacket.SEND_LOGIN, ServerHandle.GetLogin },
-                { (byte)ClientNetPacket.TEMP_SEND_KEY, ServerHandle.GetKey},
             };
         }
     }

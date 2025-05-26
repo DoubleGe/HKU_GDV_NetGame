@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -18,24 +19,21 @@ namespace NetGame.Server
             ServerBehaviour.Instance.EndStream(writer);
         }
 
-        public static void SendInt(int value, int client)
+        public static void SendScoreData(List<ScoreInfo> score, ScoreType scoreType, int client)
         {
             DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
-            writer.WriteByte((byte)ServerNetPacket.TEMP_SEND_NUMBER);
+            writer.WriteByte((byte)ServerNetPacket.SEND_SCORE);
 
             //Data
-            writer.WriteInt(value);
-
-            ServerBehaviour.Instance.EndStream(writer);
-        }
-
-        public static void SendKeyString(string key, int client)
-        {
-            DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
-            writer.WriteByte((byte)ServerNetPacket.TEMP_SEND_KEYSTRING);
-
-            //Data
-            writer.WriteFixedString32(key);
+            writer.WriteByte((byte)scoreType);
+            writer.WriteInt(score.Count);
+            for (int i = 0; i < score.Count; i++)
+            {
+                ScoreInfo scoreInfo = score[i];
+                writer.WriteFixedString32(scoreInfo.nickname);
+                writer.WriteInt(scoreInfo.score);
+                writer.WriteLong(scoreInfo.date.Ticks);
+            }
 
             ServerBehaviour.Instance.EndStream(writer);
         }
