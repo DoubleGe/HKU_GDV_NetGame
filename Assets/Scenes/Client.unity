@@ -2383,8 +2383,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 690414049}
-  - component: {fileID: 690414050}
   - component: {fileID: 690414051}
+  - component: {fileID: 690414052}
   m_Layer: 0
   m_Name: Checkersboard
   m_TagString: Untagged
@@ -2407,26 +2407,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &690414050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690414048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6b6a82832064f94fa4bce657307a971, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  boardSize: {x: 10, y: 10}
-  lightColor:
-    serializedVersion: 2
-    rgba: 4284840617
-  darkColor:
-    serializedVersion: 2
-    rgba: 4290828785
-  boardSprite: {fileID: 7482667652216324306, guid: 0206aa64471e2af4cbcc44758a0842d9, type: 3}
 --- !u!114 &690414051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2440,7 +2420,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardString: 'W:W31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50:B1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 '
-  checkersBoard: {fileID: 690414050}
+  checkersBoard: {fileID: 690414052}
+  whitePiece: {fileID: -2184101838705875366, guid: b6baed811a6ecff47810d5a49c1a266a, type: 3}
+  blackPiece: {fileID: -2184101838705875366, guid: dc1ae40d593c63540b16d863cf6a3d40, type: 3}
+--- !u!114 &690414052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690414048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d0d03cf1931f5149909dc7fc1894056, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lightColor:
+    serializedVersion: 2
+    rgba: 4284840617
+  darkColor:
+    serializedVersion: 2
+    rgba: 4290828785
+  boardSprite: {fileID: 7482667652216324306, guid: 0206aa64471e2af4cbcc44758a0842d9, type: 3}
   whitePiece: {fileID: -2184101838705875366, guid: b6baed811a6ecff47810d5a49c1a266a, type: 3}
   blackPiece: {fileID: -2184101838705875366, guid: dc1ae40d593c63540b16d863cf6a3d40, type: 3}
 --- !u!1 &699593949

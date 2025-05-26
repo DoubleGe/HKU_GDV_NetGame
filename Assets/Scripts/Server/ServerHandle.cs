@@ -20,6 +20,12 @@ namespace NetGame.Server
             {
                 ServerGlobalData.AddClient(client, resp.UID);
                 ServerSend.SendLoginResult(true, client);
+
+                //Should check for 2
+                if(ServerGlobalData.clients.Count >= 1)
+                {
+                    CheckersBoard.Instance.CreateCheckersBoard();
+                }
             }
             else
             {

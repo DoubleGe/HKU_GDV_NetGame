@@ -43,7 +43,7 @@ namespace NetGame.Client
             {
                 if (cmd == NetworkEvent.Type.Connect)
                 {
-                    Debug.Log("CLIENT: We are now connected to the server.");
+
                 }
                 else if (cmd == NetworkEvent.Type.Data)
                 {
@@ -56,7 +56,6 @@ namespace NetGame.Client
                 }
                 else if (cmd == NetworkEvent.Type.Disconnect)
                 {
-                    Debug.Log("CLIENT: Client got disconnected from server.");
                     netConnection = default;
                 }
             }
@@ -81,6 +80,7 @@ namespace NetGame.Client
             {
                 { (byte)ServerNetPacket.SEND_LOGIN_RESULT, ClientHandle.GetLoginResult },
                 { (byte)ServerNetPacket.SEND_SCORE, ClientHandle.GetScoreResult },
+                { (byte)ServerNetPacket.SEND_BOARD_INFO, ClientHandle.GetCheckerboardSettings },
 
             };
         }

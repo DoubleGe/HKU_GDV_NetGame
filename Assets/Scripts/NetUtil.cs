@@ -14,6 +14,12 @@ public static class DataStreamWriterExtensions
         writer.WriteFloat(vector2.y);
     }
 
+    public static void WriteVector2Int(this ref DataStreamWriter writer, Vector2Int vector2int)
+    {
+        writer.WriteInt(vector2int.x);
+        writer.WriteInt(vector2int.y);
+    }
+
     public static void WriteVector3(this ref DataStreamWriter writer, Vector3 vector3)
     {
         writer.WriteFloat(vector3.x);
@@ -32,6 +38,11 @@ public static class DataStreamReaderExtensions
     public static Vector2 ReadVector2(this ref DataStreamReader reader)
     {
         return new Vector2(reader.ReadFloat(), reader.ReadFloat());
+    }
+
+    public static Vector2Int ReadVector2Int(this ref DataStreamReader reader)
+    {
+        return new Vector2Int(reader.ReadInt(), reader.ReadInt());
     }
 
     public static Vector3 ReadVector3(this ref DataStreamReader reader)

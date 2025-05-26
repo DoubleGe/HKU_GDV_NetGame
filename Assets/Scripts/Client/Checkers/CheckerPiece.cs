@@ -3,6 +3,8 @@ using UnityEngine.EventSystems;
 
 public class CheckerPiece : MonoBehaviour
 {
+    public int ID;
+
     private Vector3 offset;
     private Vector2Int prevPosition;
 
@@ -35,6 +37,6 @@ public class CheckerPiece : MonoBehaviour
         Vector2Int boardPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
         transform.position = (Vector3Int)boardPos;
 
-        CheckersBoard.Instance.GetCheckerBoard()[boardPos.x, boardPos.y].SetPiece(this, true);
+        BoardDisplay.Instance.GetCheckerBoard()[boardPos.x, boardPos.y].SetPiece(this, true);
     }
 }

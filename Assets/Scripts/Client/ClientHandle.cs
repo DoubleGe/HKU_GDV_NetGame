@@ -32,6 +32,15 @@ namespace NetGame.Client
             ScoreDisplay.Instance.ShowScore(playerScores, scoreType);
         }
 
+        public static void GetCheckerboardSettings(DataStreamReader reader)
+        {
+            Vector2Int boardSize = reader.ReadVector2Int();
+            string boardString = reader.ReadFixedString128().ToString();
+
+            BoardDisplay.Instance.CreateCheckersBoard(boardSize);
+            BoardDisplay.Instance.GenerateBoardPieces(boardString);
+        }
+
 
         public static void ReadInt(DataStreamReader reader)
         {
