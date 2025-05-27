@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BoardDisplay : GenericSingleton<BoardDisplay>
@@ -14,11 +16,11 @@ public class BoardDisplay : GenericSingleton<BoardDisplay>
     [Header("Pieces")]
     [SerializeField] private CheckerPiece whitePiece;
     [SerializeField] private CheckerPiece blackPiece;
-    private List<CheckerPiece> globalPieces;
+    public List<CheckerPiece> GlobalPieces { private set; get; }
 
     private void Start()
     {
-        globalPieces = new List<CheckerPiece>();
+        GlobalPieces = new List<CheckerPiece>();
     }
 
     public void CreateCheckersBoard(Vector2Int boardSize)
@@ -40,7 +42,7 @@ public class BoardDisplay : GenericSingleton<BoardDisplay>
                 sr.sprite = boardSprite;
                 sr.color = (isLightSquare ? lightColor : darkColor);
 
-                gameBoard[x, y] = new CheckersSquare(sr);
+                gameBoard[x, y] = new CheckersSquare(sr, isLightSquare);
             }
         }
     }
@@ -88,21 +90,35 @@ public class BoardDisplay : GenericSingleton<BoardDisplay>
                 string numStr = isKing ? piece.Substring(1) : piece;
                 if (int.TryParse(numStr, out int squareNum))
                 {
-                    (int x, int y) = SquareNumToCoords(squareNum);
+                    Vector2Int moveSquare = SquareNumToCoords(squareNum);
 
-                    CheckerPiece tempPiece = Instantiate(piecePrefab, new Vector2(x, y), Quaternion.identity);
-                    tempPiece.InitPiece(isKing);
+                    CheckerPiece tempPiece = Instantiate(piecePrefab, new Vector2(moveSquare.x, moveSquare.y), Quaternion.identity);
+                    tempPiece.InitPiece(isKing, (color == "W" ? 0 : 1));
 
-                    globalPieces.Add(tempPiece);
-                    tempPiece.ID = globalPieces.Count;
+                    GlobalPieces.Add(tempPiece);
+                    tempPiece.ID = GlobalPieces.Count;
 
-                    board[x, y].SetPiece(tempPiece);
+                    board[moveSquare.x, moveSquare.y].SetPiece(tempPiece);
                 }
             }
         }
     }
 
-    private (int x, int y) SquareNumToCoords(int squareNum)
+    public void MovePieceToSquare(int pieceID, int moveSquare)
+    {
+        CheckerPiece piece = GetPieceWithID(pieceID);
+
+        Vector2Int squarePos = SquareNumToCoords(moveSquare);
+
+        Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(piece.transform.position.x), Mathf.RoundToInt(piece.transform.position.y));
+
+        gameBoard[currentPos.x, currentPos.y].SetPiece(null);
+        gameBoard[squarePos.x, squarePos.y].SetPiece(piece);
+
+        piece.transform.position = (Vector3Int)squarePos;
+    }
+
+    public Vector2Int SquareNumToCoords(int squareNum)
     {
         int zeroBasedNum = squareNum - 1;
         int row = zeroBasedNum / 5;
@@ -116,9 +132,38 @@ public class BoardDisplay : GenericSingleton<BoardDisplay>
         else
             x = colIndex * 2;
 
-        return (x, y);
+        return new Vector2Int(x, y);
     }
 
+    public int SquareCoordsToNum(Vector2Int squareCoords)
+    {
+        int y = squareCoords.y;
+        int x = squareCoords.x;
+
+        int row = 9 - y;
+        int colIndex;
+
+        if (row % 2 == 0)
+        {
+            if ((x - 1) % 2 != 0)
+                throw new ArgumentException("Invalid x coordinate for even row.");
+            colIndex = (x - 1) / 2;
+        }
+        else
+        {
+            if (x % 2 != 0)
+                throw new ArgumentException("Invalid x coordinate for odd row.");
+            colIndex = x / 2;
+        }
+
+        if (colIndex < 0 || colIndex >= 5)
+            throw new ArgumentException("x coordinate out of bounds.");
+
+        int squareNum = row * 5 + colIndex + 1;
+        return squareNum;
+    }
+
+    public CheckerPiece GetPieceWithID(int id) => GlobalPieces.First(p => p.ID == id);
 
     private void OnValidate()
     {
@@ -132,18 +177,20 @@ public class CheckersSquare
 {
     private SpriteRenderer sr;
 
-    private CheckerPiece piece;
+    public CheckerPiece Piece { private set; get; }
+    public bool AllowPlacement { private set; get; }
 
-    public CheckersSquare(SpriteRenderer sr)
+    public CheckersSquare(SpriteRenderer sr, bool allowPlacement)
     {
         this.sr = sr;
+        AllowPlacement = allowPlacement;
     }
 
     public void UpdateColor(Color32 color) => sr.color = color;
 
     public void SetPiece(CheckerPiece newPiece, bool destroyOld = false)
     {
-        if (piece != null && destroyOld) MonoBehaviour.Destroy(piece.gameObject);
-        piece = newPiece;
+        if (Piece != null && destroyOld) MonoBehaviour.Destroy(Piece.gameObject);
+        Piece = newPiece;
     }
 }

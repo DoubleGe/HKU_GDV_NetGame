@@ -22,7 +22,7 @@ namespace NetGame.Server
                 ServerSend.SendLoginResult(true, client);
 
                 //Should check for 2
-                if(ServerGlobalData.clients.Count >= 1)
+                if (ServerGlobalData.clients.Count >= 2)
                 {
                     CheckersBoard.Instance.CreateCheckersBoard();
                 }
@@ -33,6 +33,26 @@ namespace NetGame.Server
                 Debug.Log("SERVER: " + resp.customMessage);
                 ServerSend.SendLoginResult(false, client);
             }
+        }
+
+        public static void GetPieceMove(DataStreamReader reader, int client)
+        {
+            int pieceID = reader.ReadInt();
+            int pieceMove = reader.ReadInt();
+
+            MoveValidator.Instance.ValidateMove(pieceID, pieceMove, client);
+        }
+
+        public static void SendToOtherPlayerPiecePosition(DataStreamReader reader, int client)
+        {
+            int pieceID = reader.ReadInt();
+            Vector2 piecePosition = reader.ReadVector2();
+
+            ServerCheckerPiece piece = CheckersBoard.Instance.GetPieceWithID(pieceID);
+            if(piece == null) return;
+            if (piece.ownerID != client) return;
+
+            ServerSend.SendPiecePosition(pieceID, piecePosition, client);
         }
     }
 

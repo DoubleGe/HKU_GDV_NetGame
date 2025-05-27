@@ -61,6 +61,39 @@ namespace NetGame.Server
                 //Data
                 writer.WriteVector2Int(boardSize);
                 writer.WriteFixedString128(boardString);
+                writer.WriteInt(client);
+
+                ServerBehaviour.Instance.EndStream(writer);
+            }
+        }
+
+        public static void MoveResult(int pieceID, int moveToSquare, int NotUsed_client)
+        {
+            foreach (int client in ServerGlobalData.clients.Keys)
+            {
+                DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
+                writer.WriteByte((byte)ServerNetPacket.SEND_PIECE_MOVE_RESULT);
+
+                //Data
+                writer.WriteInt(pieceID);
+                writer.WriteInt(moveToSquare);
+
+                ServerBehaviour.Instance.EndStream(writer);
+            }
+        }
+
+        public static void SendPiecePosition(int pieceID, Vector2 piecePosition, int clientExclude)
+        {
+            foreach(int client in ServerGlobalData.clients.Keys)
+            {
+                if (client == clientExclude) continue;
+
+                DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
+                writer.WriteByte((byte)ServerNetPacket.SEND_PIECE_POSTION_TO_OTHER);
+
+                //Data
+                writer.WriteInt(pieceID);
+                writer.WriteVector2(piecePosition);
 
                 ServerBehaviour.Instance.EndStream(writer);
             }

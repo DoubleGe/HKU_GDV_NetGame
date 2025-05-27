@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class UserGlobalData
 {
-    
+    public static int clientID;
 }
 
 public static class ServerGlobalData

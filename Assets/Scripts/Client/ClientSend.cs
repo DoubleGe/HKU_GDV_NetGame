@@ -16,5 +16,26 @@ namespace NetGame.Client
 
             ClientBehaviour.Instance.EndStream(writer);
         }
+
+        public static void SendPieceMove(int pieceID, int moveToSquare)
+        {
+            DataStreamWriter writer = ClientBehaviour.Instance.StartNewStream(ClientNetPacket.SEND_PIECE_MOVE);
+
+            writer.WriteInt(pieceID);
+            writer.WriteInt(moveToSquare);
+
+
+            ClientBehaviour.Instance.EndStream(writer);
+        }
+
+        public static void SendPiecePosition(int pieceID, Vector2 piecePosition)
+        {
+            DataStreamWriter writer = ClientBehaviour.Instance.StartNewStream(ClientNetPacket.SEND_PIECE_POSITION);
+
+            writer.WriteInt(pieceID);
+            writer.WriteVector2(piecePosition);
+
+            ClientBehaviour.Instance.EndStream(writer);
+        }
     }
 }

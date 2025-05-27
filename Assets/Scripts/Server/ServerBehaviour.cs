@@ -98,6 +98,8 @@ namespace NetGame.Server
             packetHandlers = new Dictionary<byte, PacketHandler>
             {
                 { (byte)ClientNetPacket.SEND_LOGIN, ServerHandle.GetLogin },
+                { (byte)ClientNetPacket.SEND_PIECE_MOVE, ServerHandle.GetPieceMove },
+                { (byte)ClientNetPacket.SEND_PIECE_POSITION, ServerHandle.SendToOtherPlayerPiecePosition },
             };
         }
     }

@@ -36,11 +36,31 @@ namespace NetGame.Client
         {
             Vector2Int boardSize = reader.ReadVector2Int();
             string boardString = reader.ReadFixedString128().ToString();
+            int clientID = reader.ReadInt();
 
+            UserGlobalData.clientID = clientID;
             BoardDisplay.Instance.CreateCheckersBoard(boardSize);
             BoardDisplay.Instance.GenerateBoardPieces(boardString);
         }
 
+        public static void GetMoveResult(DataStreamReader reader)
+        {
+            int pieceID = reader.ReadInt();
+            int pieceMove = reader.ReadInt();
+
+            BoardDisplay.Instance.MovePieceToSquare(pieceID, pieceMove);
+        }
+
+        public static void GetPiecePosition(DataStreamReader reader)
+        {
+            int pieceID = reader.ReadInt();
+            Vector2 piecePosition = reader.ReadVector2();
+
+            CheckerPiece checkerPiece = BoardDisplay.Instance.GetPieceWithID(pieceID);
+
+            if (checkerPiece == null) return;
+            checkerPiece.transform.position = piecePosition;
+        }
 
         public static void ReadInt(DataStreamReader reader)
         {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,13 +15,13 @@ namespace NetGame.Server
 
         private List<ServerCheckerPiece> whitePiecesList;
         private List<ServerCheckerPiece> blackPiecesList;
-        private List<ServerCheckerPiece> globalPieces;
+        private List<ServerCheckerPiece> GlobalPieces;
 
         private void Start()
         {
             whitePiecesList = new List<ServerCheckerPiece>();
             blackPiecesList = new List<ServerCheckerPiece>();
-            globalPieces = new List<ServerCheckerPiece>();
+            GlobalPieces = new List<ServerCheckerPiece>();
         }
 
         public void CreateCheckersBoard()
@@ -35,7 +36,8 @@ namespace NetGame.Server
             {
                 for (int y = 0; y < boardSize.y; y++)
                 {
-                    gameBoard[x, y] = new ServerCheckerSquare();
+                    bool allowPlacement = (x + y) % 2 == 0;
+                    gameBoard[x, y] = new ServerCheckerSquare(allowPlacement);
                 }
             }
 
@@ -73,22 +75,20 @@ namespace NetGame.Server
                     string numStr = isKing ? piece.Substring(1) : piece;
                     if (int.TryParse(numStr, out int squareNum))
                     {
-                        (int x, int y) = SquareNumToCoords(squareNum);
+                        Vector2Int moveCoords = SquareNumToCoords(squareNum);
 
-                        ServerCheckerPiece tempPiece = new ServerCheckerPiece(isKing);
+                        ServerCheckerPiece tempPiece = new ServerCheckerPiece(moveCoords, isKing, (color == "W" ? 0 : 1));
 
                         pieceList.Add(tempPiece);
-                        globalPieces.Add(tempPiece);
-                        tempPiece.ID = globalPieces.Count;
-                        board[x, y].SetPiece(tempPiece);
+                        GlobalPieces.Add(tempPiece);
+                        tempPiece.ID = GlobalPieces.Count;
+                        board[moveCoords.x, moveCoords.y].SetPiece(tempPiece);
                     }
                 }
             }
-
-
         }
 
-        private (int x, int y) SquareNumToCoords(int squareNum)
+        public Vector2Int SquareNumToCoords(int squareNum)
         {
             int zeroBasedNum = squareNum - 1;
             int row = zeroBasedNum / 5;
@@ -102,28 +102,67 @@ namespace NetGame.Server
             else
                 x = colIndex * 2;
 
-            return (x, y);
+            return new Vector2Int(x, y);
         }
+
+        public int SquareCoordsToNum(Vector2Int squareCoords)
+        {
+            int y = squareCoords.y;
+            int x = squareCoords.x;
+
+            int row = 9 - y;
+            int colIndex;
+
+            if (row % 2 == 0)
+            {
+                if ((x - 1) % 2 != 0)
+                    throw new ArgumentException("Invalid x coordinate for even row.");
+                colIndex = (x - 1) / 2;
+            }
+            else
+            {
+                if (x % 2 != 0)
+                    throw new ArgumentException("Invalid x coordinate for odd row.");
+                colIndex = x / 2;
+            }
+
+            if (colIndex < 0 || colIndex >= 5)
+                throw new ArgumentException("x coordinate out of bounds.");
+
+            int squareNum = row * 5 + colIndex + 1;
+            return squareNum;
+        }
+
+        public ServerCheckerPiece GetPieceWithID(int id) => GlobalPieces.First(p => p.ID == id);
+
     }
 
     public class ServerCheckerSquare
     {
-        private ServerCheckerPiece piece;
+        public ServerCheckerPiece Piece { private set; get; }
 
-        public void SetPiece(ServerCheckerPiece newPiece)
+        public bool AllowPlacement { private set; get; }
+
+        public ServerCheckerSquare(bool allowPlacement)
         {
-            piece = newPiece;
+            AllowPlacement = allowPlacement;
         }
+
+        public void SetPiece(ServerCheckerPiece newPiece) => Piece = newPiece;
     }
 
     public class ServerCheckerPiece
     {
         public int ID;
         public bool isKing;
+        public Vector2Int currentPosition;
+        public int ownerID;
 
-        public ServerCheckerPiece(bool isKing)
+        public ServerCheckerPiece(Vector2Int currentPosition, bool isKing, int ownerID)
         {
+            this.currentPosition = currentPosition;
             this.isKing = isKing;
+            this.ownerID = ownerID;
         }
     }
 }
