@@ -83,6 +83,7 @@ namespace NetGame.Client
                 { (byte)ServerNetPacket.SEND_BOARD_INFO, ClientHandle.GetCheckerboardSettings },
                 { (byte)ServerNetPacket.SEND_PIECE_MOVE_RESULT, ClientHandle.GetMoveResult },
                 { (byte)ServerNetPacket.SEND_PIECE_POSTION_TO_OTHER, ClientHandle.GetPiecePosition },
+                { (byte)ServerNetPacket.SEND_PLAYER_TURN, ClientHandle.GetPlayerTurn },
 
             };
         }

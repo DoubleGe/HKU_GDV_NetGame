@@ -1,5 +1,6 @@
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace NetGame.Server
 {
@@ -18,7 +19,7 @@ namespace NetGame.Server
 
             if (resp.status == "OK")
             {
-                ServerGlobalData.AddClient(client, resp.UID);
+                ServerGlobalData.AddClient(client, resp.UID, "NOT IMPLEMENTED");
                 ServerSend.SendLoginResult(true, client);
 
                 //Should check for 2
@@ -48,6 +49,8 @@ namespace NetGame.Server
             int pieceID = reader.ReadInt();
             Vector2 piecePosition = reader.ReadVector2();
 
+            if (!MoveValidator.Instance.IsPlayerTurn(client)) return;
+
             ServerCheckerPiece piece = CheckersBoard.Instance.GetPieceWithID(pieceID);
             if(piece == null) return;
             if (piece.ownerID != client) return;
@@ -74,5 +77,6 @@ namespace NetGame.Server
     internal class LoginResponse : Response
     {
         public int UID;
+        public string username;
     }
 }

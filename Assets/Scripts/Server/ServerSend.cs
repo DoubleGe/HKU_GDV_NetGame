@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
@@ -53,6 +54,8 @@ namespace NetGame.Server
 
         public static void SendCheckersBoardInfo(Vector2Int boardSize, string boardString)
         {
+            bool playerTurn = MoveValidator.Instance.SetStartingPlayer();
+
             foreach (int client in ServerGlobalData.clients.Keys)
             {
                 DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
@@ -62,6 +65,13 @@ namespace NetGame.Server
                 writer.WriteVector2Int(boardSize);
                 writer.WriteFixedString128(boardString);
                 writer.WriteInt(client);
+                writer.WriteBool(playerTurn);
+
+                //Write Client Names
+                for (int i = 0; i < 2; i++)
+                {
+                    writer.WriteFixedString32(ServerGlobalData.clients[i].username);
+                }
 
                 ServerBehaviour.Instance.EndStream(writer);
             }
@@ -94,6 +104,20 @@ namespace NetGame.Server
                 //Data
                 writer.WriteInt(pieceID);
                 writer.WriteVector2(piecePosition);
+
+                ServerBehaviour.Instance.EndStream(writer);
+            }
+        }
+
+        public static void SendTurnInfo(bool isWhiteTurn)
+        {
+            foreach (int client in ServerGlobalData.clients.Keys)
+            {
+                DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
+                writer.WriteByte((byte)ServerNetPacket.SEND_PLAYER_TURN);
+
+                //Data
+                writer.WriteBool(isWhiteTurn);
 
                 ServerBehaviour.Instance.EndStream(writer);
             }

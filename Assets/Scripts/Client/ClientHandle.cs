@@ -37,10 +37,21 @@ namespace NetGame.Client
             Vector2Int boardSize = reader.ReadVector2Int();
             string boardString = reader.ReadFixedString128().ToString();
             int clientID = reader.ReadInt();
+            bool startingPlayer = reader.ReadBool();
+
+            string[] clientStrings = new string[2]; 
+            //Write Client Names
+            for (int i = 0; i < 2; i++)
+            {
+                clientStrings[i] = reader.ReadFixedString32().ToString();
+            }
 
             UserGlobalData.clientID = clientID;
             BoardDisplay.Instance.CreateCheckersBoard(boardSize);
             BoardDisplay.Instance.GenerateBoardPieces(boardString);
+
+            UIManager.Instance.SetupGame(clientStrings[0], clientStrings[1]);
+            UIManager.Instance.SetPlayerTurn(startingPlayer);
         }
 
         public static void GetMoveResult(DataStreamReader reader)
@@ -62,19 +73,11 @@ namespace NetGame.Client
             checkerPiece.transform.position = piecePosition;
         }
 
-        public static void ReadInt(DataStreamReader reader)
+        public static void GetPlayerTurn(DataStreamReader reader)
         {
-            Debug.Log("CLIENT: Number: " + reader.ReadInt());
-        }
+            bool isWhiteTurn = reader.ReadBool();
 
-        public static void GetPosition(DataStreamReader reader)
-        {
-            Debug.Log("CLIENT: Position: " + reader.ReadVector3());
-        }
-
-        public static void GetKey(DataStreamReader reader)
-        {
-            Debug.Log("CLIENT: Key: " + reader.ReadFixedString32());
+            UIManager.Instance.SetPlayerTurn(isWhiteTurn);
         }
     }
 }

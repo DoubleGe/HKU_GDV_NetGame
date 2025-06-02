@@ -14,11 +14,11 @@ public static class ServerGlobalData
     private static int joinedCount;
     public static Dictionary<int, ClientData> clients;
 
-    public static void AddClient(int clientID, int UID)
+    public static void AddClient(int clientID, int UID, string username)
     {
         if(clients == null) clients = new Dictionary<int, ClientData>();
 
-        clients.Add(clientID, new ClientData(UID));
+        clients.Add(clientID, new ClientData(UID, username));
     } 
 
     public static bool RemoveClient(int clientID)
@@ -37,9 +37,11 @@ public static class ServerGlobalData
 public class ClientData
 {
     public int UID;
+    public string username;
 
-    public ClientData(int UID)
+    public ClientData(int UID, string username)
     {
         this.UID = UID;
+        this.username = username;
     }
 }

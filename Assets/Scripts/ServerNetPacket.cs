@@ -7,6 +7,7 @@ public enum ServerNetPacket
    SEND_BOARD_INFO = 3,
    SEND_PIECE_MOVE_RESULT = 4,
    SEND_PIECE_POSTION_TO_OTHER = 5,
+   SEND_PLAYER_TURN = 6,
 }
 
 public enum ClientNetPacket

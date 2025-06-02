@@ -1,13 +1,21 @@
 using UnityEngine;
 
-namespace NetGame.Server {
+namespace NetGame.Server
+{
     public class MoveValidator : GenericSingleton<MoveValidator>
     {
+        private bool whiteTurn = true;
 
         public void ValidateMove(int pieceID, int moveSquare, int client)
         {
             ServerCheckerPiece piece = CheckersBoard.Instance.GetPieceWithID(pieceID);
             int prevPosition = CheckersBoard.Instance.SquareCoordsToNum(piece.currentPosition);
+
+            if (!IsPlayerTurn(client))
+            {
+                ServerSend.MoveResult(pieceID, prevPosition, client);
+                return;
+            }
 
             if (moveSquare < 0 || piece == null)
             {
@@ -39,9 +47,25 @@ namespace NetGame.Server {
             piece.currentPosition = movePos;
 
             ServerSend.MoveResult(pieceID, moveSquare, client);
-            //$$ SWITC SIDE
+
+            //$$ NEEDS CHECK FOR ANOTHER TURN WHEN NEEDING TO HIT
+            whiteTurn = !whiteTurn;
+
+            ServerSend.SendTurnInfo(whiteTurn);
         }
 
+        public bool SetStartingPlayer()
+        {
+            whiteTurn = Random.Range(0, 2) == 0;
+            return whiteTurn;
+        }
 
+        public bool IsPlayerTurn(int clientID)
+        {
+            bool isWhite = clientID == 0;
+            bool isBlack = clientID == 1;
+
+            return ((whiteTurn && isWhite) || (!whiteTurn && isBlack));
+        }
     }
 }
