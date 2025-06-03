@@ -19,7 +19,7 @@ namespace NetGame.Server
 
             if (resp.status == "OK")
             {
-                ServerGlobalData.AddClient(client, resp.UID, "NOT IMPLEMENTED");
+                ServerGlobalData.AddClient(client, resp.UID, resp.username);
                 ServerSend.SendLoginResult(true, client);
 
                 //Should check for 2
