@@ -43,7 +43,7 @@ namespace NetGame.Client
             {
                 if (cmd == NetworkEvent.Type.Connect)
                 {
-
+                    LoginManager.Instance.EnableLoginButton();
                 }
                 else if (cmd == NetworkEvent.Type.Data)
                 {

@@ -11,6 +11,8 @@ namespace NetGame.Client
 
         [SerializeField] private Button signInButton, signUpButton;
 
+        public void EnableLoginButton() => signInButton.interactable = true;
+
         public void LoginButton()
         {
             if (string.IsNullOrEmpty(emailInput.text)) return;
@@ -30,6 +32,7 @@ namespace NetGame.Client
             signInButton.interactable = true;
             signUpButton.interactable = true;
 
+            UIManager.Instance.ShowWaitingOpponent(result);
             if(result) gameObject.SetActive(false);
         }
 

@@ -5,11 +5,19 @@ namespace NetGame.Client
 {
     public class UIManager : GenericSingleton<UIManager>
     {
+        [Header("Waiting For Opponent")]
+        [SerializeField] private GameObject waitingOpponentObj;
+
         [Header("Game Info")]
         [SerializeField] private GameObject gameUI;
         [SerializeField] private TextMeshProUGUI player1NameText;
         [SerializeField] private TextMeshProUGUI player2NameText;
         [SerializeField] private GameObject[] playerTurnMarker;
+
+        public void ShowWaitingOpponent(bool show)
+        {
+            waitingOpponentObj.SetActive(show);
+        }
 
         public void SetupGame(string player1Name, string player2Name)
         {

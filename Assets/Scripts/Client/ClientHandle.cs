@@ -52,6 +52,7 @@ namespace NetGame.Client
 
             UIManager.Instance.SetupGame(clientStrings[0], clientStrings[1]);
             UIManager.Instance.SetPlayerTurn(startingPlayer);
+            UIManager.Instance.ShowWaitingOpponent(false);
         }
 
         public static void GetMoveResult(DataStreamReader reader)
