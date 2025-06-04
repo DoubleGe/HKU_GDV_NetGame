@@ -19,10 +19,12 @@ namespace NetGame.Client
             gameUI.SetActive(true);
         }
 
-        public void SetPlayerTurn(bool whiteTurn)
+        public void SetPlayerTurn(bool isWhiteTurn)
         {
-            playerTurnMarker[0].SetActive(whiteTurn);
-            playerTurnMarker[1].SetActive(!whiteTurn);
+            playerTurnMarker[0].SetActive(isWhiteTurn);
+            playerTurnMarker[1].SetActive(!isWhiteTurn);
+
+            UserGlobalData.isMyTurn = (UserGlobalData.clientID == 0 && isWhiteTurn) || (UserGlobalData.clientID == 1 && !isWhiteTurn);
         }
     }
 }

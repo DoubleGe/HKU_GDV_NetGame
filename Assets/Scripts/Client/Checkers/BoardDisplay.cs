@@ -165,6 +165,14 @@ public class BoardDisplay : GenericSingleton<BoardDisplay>
 
     public CheckerPiece GetPieceWithID(int id) => GlobalPieces.First(p => p.ID == id);
 
+    public void RemovePiece(int pieceID)
+    {
+        CheckerPiece checkerPiece = GlobalPieces.Find(p => p.ID == pieceID);
+
+        GlobalPieces.Remove(checkerPiece);
+        Destroy(checkerPiece.gameObject);
+    }
+
     private void OnValidate()
     {
         if (gameBoard == null) return;

@@ -20,7 +20,7 @@ public class CheckerPiece : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (owner != UserGlobalData.clientID) return;
+        if (owner != UserGlobalData.clientID || !UserGlobalData.isMyTurn) return;
 
         prevPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
 
@@ -31,7 +31,7 @@ public class CheckerPiece : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        if (owner != UserGlobalData.clientID) return;
+        if (owner != UserGlobalData.clientID || !UserGlobalData.isMyTurn) return;
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0;
@@ -42,7 +42,7 @@ public class CheckerPiece : MonoBehaviour
 
     private void OnMouseUp()
     {
-        if (owner != UserGlobalData.clientID) return;
+        if (owner != UserGlobalData.clientID || !UserGlobalData.isMyTurn) return;
 
         Vector2Int boardPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
 

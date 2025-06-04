@@ -5,6 +5,7 @@ using UnityEngine;
 public static class UserGlobalData
 {
     public static int clientID;
+    public static bool isMyTurn;
 }
 
 public static class ServerGlobalData

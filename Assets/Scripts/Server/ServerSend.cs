@@ -77,7 +77,7 @@ namespace NetGame.Server
             }
         }
 
-        public static void MoveResult(int pieceID, int moveToSquare, int NotUsed_client)
+        public static void MoveResult(int pieceID, int moveToSquare)
         {
             foreach (int client in ServerGlobalData.clients.Keys)
             {
@@ -87,6 +87,20 @@ namespace NetGame.Server
                 //Data
                 writer.WriteInt(pieceID);
                 writer.WriteInt(moveToSquare);
+
+                ServerBehaviour.Instance.EndStream(writer);
+            }
+        }
+
+        public static void RemovePiece(int pieceID)
+        {
+            foreach (int client in ServerGlobalData.clients.Keys)
+            {
+                DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
+                writer.WriteByte((byte)ServerNetPacket.SEND_REMOVE_PIECE);
+
+                //Data
+                writer.WriteInt(pieceID);
 
                 ServerBehaviour.Instance.EndStream(writer);
             }

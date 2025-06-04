@@ -79,5 +79,12 @@ namespace NetGame.Client
 
             UIManager.Instance.SetPlayerTurn(isWhiteTurn);
         }
+
+        public static void RemovePiece(DataStreamReader reader)
+        {
+            int pieceID = reader.ReadInt();
+
+            BoardDisplay.Instance.RemovePiece(pieceID);
+        }
     }
 }

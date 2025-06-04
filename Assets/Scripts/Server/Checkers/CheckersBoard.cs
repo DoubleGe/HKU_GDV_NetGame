@@ -135,6 +135,21 @@ namespace NetGame.Server
 
         public ServerCheckerPiece GetPieceWithID(int id) => GlobalPieces.First(p => p.ID == id);
 
+        public void RemovePiece(int pieceID)
+        {
+            ServerCheckerPiece pieceToRemove = GlobalPieces.Find(p  => p.ID == pieceID);
+
+            GlobalPieces.Remove(pieceToRemove);
+
+            if(whitePiecesList.Contains(pieceToRemove)) whitePiecesList.Remove(pieceToRemove);
+            if(blackPiecesList.Contains(pieceToRemove)) blackPiecesList.Remove(pieceToRemove);
+
+            ServerSend.RemovePiece(pieceID);
+            gameBoard[pieceToRemove.currentPosition.x, pieceToRemove.currentPosition.y].SetPiece(null);
+            //Check Win condition
+        }
+
+        public List<ServerCheckerPiece> GetAllPieces() => GlobalPieces;
     }
 
     public class ServerCheckerSquare
