@@ -136,5 +136,19 @@ namespace NetGame.Server
                 ServerBehaviour.Instance.EndStream(writer);
             }
         }
+
+        public static void PromoteToKing(int pieceID)
+        {
+            foreach (int client in ServerGlobalData.clients.Keys)
+            {
+                DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
+                writer.WriteByte((byte)ServerNetPacket.SEND_PIECE_PROMOTION);
+
+                //Data
+                writer.WriteInt(pieceID);
+
+                ServerBehaviour.Instance.EndStream(writer);
+            }
+        }
     }
 }

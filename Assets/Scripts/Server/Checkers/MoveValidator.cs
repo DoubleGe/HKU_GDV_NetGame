@@ -58,6 +58,7 @@ namespace NetGame.Server
             board[piece.currentPosition.x, piece.currentPosition.y].SetPiece(null);
             board[movePos.x, movePos.y].SetPiece(piece);
             piece.currentPosition = movePos;
+            TryPromoteToKing(piece);
 
             ServerSend.MoveResult(pieceID, moveSquare);
 
@@ -79,7 +80,7 @@ namespace NetGame.Server
                 whiteTurn = !whiteTurn;
 
                 ServerSend.SendTurnInfo(whiteTurn);
-            }           
+            }
         }
 
         private bool IsValidMove(ServerCheckerPiece piece, Vector2Int targetPos, out bool isJump, out Vector2Int jumpedPiecePos)
@@ -94,17 +95,41 @@ namespace NetGame.Server
             bool isWhite = piece.ownerID == 0;
             bool isKing = piece.isKing;
 
-            if (!isKing)
-            {
-                if (isWhite && direction.y < 0) return false;
-                if (!isWhite && direction.y > 0) return false;
-            }
+            if (!IsInsideBoard(targetPos)) return false;
 
-            if (absX == 1 && absY == 1)
+            // KING
+            if (isKing && absX == absY)
             {
+                Vector2Int step = new Vector2Int((int)Mathf.Sign(direction.x), (int)Mathf.Sign(direction.y));
+                Vector2Int current = piece.currentPosition + step;
+
+                bool foundEnemy = false;
+                Vector2Int enemyPos = new Vector2Int(-1, -1);
+
+                while (current != targetPos)
+                {
+                    ServerCheckerPiece currentPiece = CheckersBoard.Instance.GetCheckerBoard()[current.x, current.y].Piece;
+                    if (currentPiece != null)
+                    {
+                        if (currentPiece.ownerID == piece.ownerID) return false;
+                        if (foundEnemy) return false;
+                        foundEnemy = true;
+                        enemyPos = current;
+                    }
+                    current += step;
+                }
+
+                if (foundEnemy)
+                {
+                    isJump = true;
+                    jumpedPiecePos = enemyPos;
+                }
+
                 return true;
             }
-            else if (absX == 2 && absY == 2)
+
+            // Normall
+            if (absX == 2 && absY == 2)
             {
                 Vector2Int middle = piece.currentPosition + direction / 2;
                 ServerCheckerPiece middlePiece = CheckersBoard.Instance.GetCheckerBoard()[middle.x, middle.y].Piece;
@@ -115,6 +140,17 @@ namespace NetGame.Server
                     jumpedPiecePos = middle;
                     return true;
                 }
+            }
+
+            // Normall
+            if (absX == 1 && absY == 1)
+            {
+                if (!isKing)
+                {
+                    if (isWhite && direction.y < 0) return false;
+                    if (!isWhite && direction.y > 0) return false;
+                }
+                return true;
             }
 
             return false;
@@ -133,60 +169,130 @@ namespace NetGame.Server
         private bool IsAttemptingJump(ServerCheckerPiece piece, Vector2Int movePos)
         {
             Vector2Int direction = movePos - piece.currentPosition;
-            return Mathf.Abs(direction.x) == 2 && Mathf.Abs(direction.y) == 2;
+            int absX = Mathf.Abs(direction.x);
+            int absY = Mathf.Abs(direction.y);
+
+            if (absX != absY) return false; 
+
+            if (!piece.isKing)
+            {
+                return absX == 2 && absY == 2;
+            }
+            else
+            {
+                Vector2Int step = new Vector2Int((int)Mathf.Sign(direction.x), (int)Mathf.Sign(direction.y));
+                Vector2Int current = piece.currentPosition + step;
+
+                bool foundEnemy = false;
+
+                while (current != movePos)
+                {
+                    var board = CheckersBoard.Instance.GetCheckerBoard();
+                    if (!IsInsideBoard(current)) return false;
+
+                    var checkPiece = board[current.x, current.y].Piece;
+
+                    if (checkPiece != null)
+                    {
+                        if (checkPiece.ownerID == piece.ownerID) return false;
+                        if (foundEnemy) return false;
+                        foundEnemy = true;
+                    }
+
+                    current += step;
+                }
+
+                return foundEnemy;
+            }
         }
+
 
         private bool CanJumpAgain(ServerCheckerPiece piece)
         {
             ServerCheckerSquare[,] board = CheckersBoard.Instance.GetCheckerBoard();
             Vector2Int pos = piece.currentPosition;
-            bool isWhite = piece.ownerID == 0;
             bool isKing = piece.isKing;
 
-            List<Vector2Int> directions = new List<Vector2Int>();
-
-            if (isKing)
+            List<Vector2Int> directions = new List<Vector2Int>
             {
-                directions.AddRange(new[] {
-                    new Vector2Int(1, 1), new Vector2Int(-1, 1),
-                    new Vector2Int(1, -1), new Vector2Int(-1, -1)
-                });
-            }
-            else
-            {
-                int forward = isWhite ? 1 : -1;
-                directions.AddRange(new[] {
-                    new Vector2Int(1, forward), new Vector2Int(-1, forward)
-                });
-            }
+                new Vector2Int(1, 1),
+                new Vector2Int(-1, 1),
+                new Vector2Int(1, -1),
+                new Vector2Int(-1, -1)
+            };
 
             foreach (Vector2Int dir in directions)
             {
-                Vector2Int midPos = pos + dir;
-                Vector2Int jumpPos = pos + dir * 2;
-
-                if (!IsInsideBoard(jumpPos)) continue;
-
-                ServerCheckerPiece middlePiece = board[midPos.x, midPos.y].Piece;
-                ServerCheckerSquare targetSquare = board[jumpPos.x, jumpPos.y];
-
-                if (middlePiece != null &&
-                    middlePiece.ownerID != piece.ownerID &&
-                    targetSquare.Piece == null &&
-                    targetSquare.AllowPlacement)
+                if (!isKing)
                 {
-                    return true;
+                    // Normall
+                    Vector2Int midPos = pos + dir;
+                    Vector2Int jumpPos = pos + dir * 2;
+
+                    if (!IsInsideBoard(jumpPos)) continue;
+
+                    ServerCheckerPiece middlePiece = board[midPos.x, midPos.y].Piece;
+                    ServerCheckerSquare targetSquare = board[jumpPos.x, jumpPos.y];
+
+                    if (middlePiece != null &&
+                        middlePiece.ownerID != piece.ownerID &&
+                        targetSquare.Piece == null &&
+                        targetSquare.AllowPlacement)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    //King
+                    Vector2Int current = pos + dir;
+                    bool foundEnemy = false;
+
+                    while (IsInsideBoard(current))
+                    {
+                        ServerCheckerPiece currentPiece = board[current.x, current.y].Piece;
+
+                        if (currentPiece != null)
+                        {
+                            if (currentPiece.ownerID == piece.ownerID) break;
+                            if (foundEnemy) break;
+                            foundEnemy = true;
+                            current += dir;
+                            continue;
+                        }
+
+                        if (foundEnemy)
+                        {
+                            if (board[current.x, current.y].AllowPlacement)
+                                return true;
+                        }
+
+                        current += dir;
+                    }
                 }
             }
 
             return false;
         }
 
+
         private bool IsInsideBoard(Vector2Int pos)
         {
             ServerCheckerSquare[,] board = CheckersBoard.Instance.GetCheckerBoard();
             return pos.x >= 0 && pos.x < board.GetLength(0) &&
                    pos.y >= 0 && pos.y < board.GetLength(1);
+        }
+
+        private void TryPromoteToKing(ServerCheckerPiece piece)
+        {
+            int y = piece.currentPosition.y;
+            bool isWhite = piece.ownerID == 0;
+
+            if (!piece.isKing && ((isWhite && y == 9) || (!isWhite && y == 0)))
+            {
+                piece.isKing = true;
+                ServerSend.PromoteToKing(piece.ID);
+            }
         }
 
         public bool SetStartingPlayer()

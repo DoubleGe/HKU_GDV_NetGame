@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 public class CheckerPiece : MonoBehaviour
 {
     public int ID;
+    [SerializeField] private GameObject kingCrown;
 
     private Vector3 offset;
     private Vector2Int prevPosition;
@@ -75,5 +76,11 @@ public class CheckerPiece : MonoBehaviour
 
             ClientSend.SendPiecePosition(ID, transform.position);
         }
+    }
+
+    public void PromotePiece()
+    {
+        kingCrown.SetActive(true);
+        isKing = true;
     }
 }

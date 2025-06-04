@@ -86,5 +86,14 @@ namespace NetGame.Client
 
             BoardDisplay.Instance.RemovePiece(pieceID);
         }
+
+        public static void PiecePromotion(DataStreamReader reader)
+        {
+            int pieceID = reader.ReadInt();
+
+            CheckerPiece checkerPiece = BoardDisplay.Instance.GetPieceWithID(pieceID);
+
+            if (checkerPiece != null) checkerPiece.PromotePiece();
+        }
     }
 }

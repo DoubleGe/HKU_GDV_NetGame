@@ -8,7 +8,8 @@ public enum ServerNetPacket
    SEND_PIECE_MOVE_RESULT = 4,
    SEND_PIECE_POSTION_TO_OTHER = 5,
    SEND_PLAYER_TURN = 6,
-   SEND_REMOVE_PIECE = 7
+   SEND_REMOVE_PIECE = 7,
+   SEND_PIECE_PROMOTION = 8,
 }
 
 public enum ClientNetPacket
