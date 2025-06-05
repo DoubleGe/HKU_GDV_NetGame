@@ -7,16 +7,13 @@ using UnityEngine;
 
 namespace NetGame.Server
 {
-    public class ScoreManager : MonoBehaviour
+    public class ScoreManager : GenericSingleton<ScoreManager>
     {
-        //private IEnumerator Start()
-        //{
-        //    yield return new WaitForSeconds(2);
-        //    Task task = SendScoresToClient(ScoreType.RECENT, 1);
-        //    yield return new WaitUntil(() => task.IsCompleted);
-        //    task = SendScoresToClient(ScoreType.HIGHSCORE, 1);
-        //    yield return new WaitUntil(() => task.IsCompleted);
-        //}
+        public async void ShowScores()
+        {
+            await SendScoresToClient(ScoreType.RECENT, 1);
+            await SendScoresToClient(ScoreType.HIGHSCORE, 1);
+        }
 
         private async Task SendScoresToClient(ScoreType scoreType, int gameID)
         {

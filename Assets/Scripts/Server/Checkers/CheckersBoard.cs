@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -167,7 +168,24 @@ namespace NetGame.Server
 
         private async void SendScoreResult(int uid, int remainingPieces)
         {
+            ScoreSendRequest scoreRequest = new ScoreSendRequest(1, uid, remainingPieces * 100 + 1000);
 
+            Response resp = await RequestManager.SendRequestAsync<ScoreSendRequest, Response>(RequestManager.DEFAULT_URL + "AddScore.php", scoreRequest);
+
+
+            //FAILED
+            if (resp == null) return;
+
+            if (resp.status == "OK")
+            {
+                await Task.Delay(5000);
+                ScoreManager.Instance.ShowScores();
+            }
+            else
+            {
+                //FAILED
+                Debug.Log("SERVER: " + resp.customMessage);
+            }
         }
 
         public List<ServerCheckerPiece> GetAllPieces() => GlobalPieces;
