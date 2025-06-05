@@ -96,5 +96,14 @@ namespace NetGame.Client
 
             if (checkerPiece != null) checkerPiece.PromotePiece();
         }
+
+        public static void GetWinResult(DataStreamReader reader)
+        {
+            int winnerID = reader.ReadInt();
+            int loserID = reader.ReadInt();
+            bool didWhiteWin = reader.ReadBool();
+
+            UIManager.Instance.SetPlayerWin(winnerID, loserID, didWhiteWin);
+        }
     }
 }

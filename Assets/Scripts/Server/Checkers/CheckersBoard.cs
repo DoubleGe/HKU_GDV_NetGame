@@ -137,16 +137,37 @@ namespace NetGame.Server
 
         public void RemovePiece(int pieceID)
         {
-            ServerCheckerPiece pieceToRemove = GlobalPieces.Find(p  => p.ID == pieceID);
+            ServerCheckerPiece pieceToRemove = GlobalPieces.Find(p => p.ID == pieceID);
 
             GlobalPieces.Remove(pieceToRemove);
 
-            if(whitePiecesList.Contains(pieceToRemove)) whitePiecesList.Remove(pieceToRemove);
-            if(blackPiecesList.Contains(pieceToRemove)) blackPiecesList.Remove(pieceToRemove);
+            if (whitePiecesList.Contains(pieceToRemove)) whitePiecesList.Remove(pieceToRemove);
+            if (blackPiecesList.Contains(pieceToRemove)) blackPiecesList.Remove(pieceToRemove);
 
             ServerSend.RemovePiece(pieceID);
             gameBoard[pieceToRemove.currentPosition.x, pieceToRemove.currentPosition.y].SetPiece(null);
+
             //Check Win condition
+            CheckCaptureWinCondition();
+        }
+
+        private void CheckCaptureWinCondition()
+        {
+            if (blackPiecesList.Count == 0)
+            {
+                ServerSend.SendGameResult(0, 1, true);
+                SendScoreResult(ServerGlobalData.clients[0].UID, whitePiecesList.Count);
+            }
+            else if (whitePiecesList.Count == 0)
+            {
+                ServerSend.SendGameResult(1, 0, false);
+                SendScoreResult(ServerGlobalData.clients[1].UID, blackPiecesList.Count);
+            }
+        }
+
+        private async void SendScoreResult(int uid, int remainingPieces)
+        {
+
         }
 
         public List<ServerCheckerPiece> GetAllPieces() => GlobalPieces;

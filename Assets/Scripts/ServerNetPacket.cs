@@ -10,6 +10,7 @@ public enum ServerNetPacket
    SEND_PLAYER_TURN = 6,
    SEND_REMOVE_PIECE = 7,
    SEND_PIECE_PROMOTION = 8,
+   SEND_GAME_RESULT = 9,
 }
 
 public enum ClientNetPacket

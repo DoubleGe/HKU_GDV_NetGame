@@ -14,6 +14,13 @@ namespace NetGame.Client
         [SerializeField] private TextMeshProUGUI player2NameText;
         [SerializeField] private GameObject[] playerTurnMarker;
 
+        [Header("Win UI")]
+        [SerializeField] private GameObject resultObject;
+        [SerializeField] private GameObject winObject;
+        [SerializeField] private GameObject loseObject;
+        [SerializeField] private GameObject whiteWinsObject;
+        [SerializeField] private GameObject blackWinsObject;
+
         public void ShowWaitingOpponent(bool show)
         {
             waitingOpponentObj.SetActive(show);
@@ -33,6 +40,16 @@ namespace NetGame.Client
             playerTurnMarker[1].SetActive(!isWhiteTurn);
 
             UserGlobalData.isMyTurn = (UserGlobalData.clientID == 0 && isWhiteTurn) || (UserGlobalData.clientID == 1 && !isWhiteTurn);
+        }
+
+        public void SetPlayerWin(int winningPlayer, int losingPlayer, bool didWhiteWin)
+        {
+            if (winningPlayer == UserGlobalData.clientID) winObject.SetActive(true);
+            else if (losingPlayer == UserGlobalData.clientID) loseObject.SetActive(true);
+            else if (didWhiteWin) whiteWinsObject.SetActive(true);
+            else if (!didWhiteWin) whiteWinsObject.SetActive(false);
+
+            resultObject.SetActive(true);
         }
     }
 }

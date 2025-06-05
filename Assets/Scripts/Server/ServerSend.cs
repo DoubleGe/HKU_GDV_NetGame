@@ -150,5 +150,21 @@ namespace NetGame.Server
                 ServerBehaviour.Instance.EndStream(writer);
             }
         }
+
+        public static void SendGameResult(int winnerID, int loserID, bool whiteWins)
+        {
+            foreach (int client in ServerGlobalData.clients.Keys)
+            {
+                DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
+                writer.WriteByte((byte)ServerNetPacket.SEND_GAME_RESULT);
+
+                //Data
+                writer.WriteInt(winnerID);
+                writer.WriteInt(loserID);
+                writer.WriteBool(whiteWins);
+
+                ServerBehaviour.Instance.EndStream(writer);
+            }
+        }
     }
 }

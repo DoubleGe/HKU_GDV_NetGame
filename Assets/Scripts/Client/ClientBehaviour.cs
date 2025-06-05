@@ -86,6 +86,7 @@ namespace NetGame.Client
                 { (byte)ServerNetPacket.SEND_PLAYER_TURN, ClientHandle.GetPlayerTurn },
                 { (byte)ServerNetPacket.SEND_REMOVE_PIECE, ClientHandle.RemovePiece },
                 { (byte)ServerNetPacket.SEND_PIECE_PROMOTION, ClientHandle.PiecePromotion },
+                { (byte)ServerNetPacket.SEND_GAME_RESULT, ClientHandle.GetWinResult },
             };
         }
     }
