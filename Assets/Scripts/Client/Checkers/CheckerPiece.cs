@@ -8,7 +8,7 @@ public class CheckerPiece : MonoBehaviour
     [SerializeField] private GameObject kingCrown;
 
     private Vector3 offset;
-    private Vector2Int prevPosition;
+    public Vector2Int prevPosition;
 
     private bool isKing;
     private int owner;
@@ -17,6 +17,8 @@ public class CheckerPiece : MonoBehaviour
     {
         this.isKing = isKing;
         this.owner = owner;
+
+        prevPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
     }
 
     private void OnMouseDown()
@@ -66,7 +68,6 @@ public class CheckerPiece : MonoBehaviour
 
             board[prevPosition.x, prevPosition.y].SetPiece(null);
             board[boardPos.x, boardPos.y].SetPiece(this);
-
 
             ClientSend.SendPieceMove(ID, BoardDisplay.Instance.SquareCoordsToNum(boardPos));
         }

@@ -12,15 +12,19 @@ public class BoardDisplay : GenericSingleton<BoardDisplay>
     [SerializeField] private Color32 lightColor;
     [SerializeField] private Color32 darkColor;
     [SerializeField] private Sprite boardSprite;
+    [SerializeField] private Color32 moveColor;
 
     [Header("Pieces")]
     [SerializeField] private CheckerPiece whitePiece;
     [SerializeField] private CheckerPiece blackPiece;
     public List<CheckerPiece> GlobalPieces { private set; get; }
 
+    private List<CheckersSquare> prevColored;
+
     private void Start()
     {
         GlobalPieces = new List<CheckerPiece>();
+        prevColored = new List<CheckersSquare>();
     }
 
     public void CreateCheckersBoard(Vector2Int boardSize)
@@ -112,10 +116,25 @@ public class BoardDisplay : GenericSingleton<BoardDisplay>
 
         Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(piece.transform.position.x), Mathf.RoundToInt(piece.transform.position.y));
 
-        gameBoard[currentPos.x, currentPos.y].SetPiece(null);
-        gameBoard[squarePos.x, squarePos.y].SetPiece(piece);
-
         piece.transform.position = (Vector3Int)squarePos;
+        if (squarePos == piece.prevPosition) return;
+
+        prevColored.ForEach(cs => cs.UpdateColor(lightColor));
+        prevColored.Clear();
+
+        CheckersSquare newSquare = gameBoard[squarePos.x, squarePos.y];
+        CheckersSquare prevSquare = gameBoard[piece.prevPosition.x, piece.prevPosition.y];
+
+        prevSquare.UpdateColor(moveColor);
+        newSquare.UpdateColor(moveColor);
+
+        prevColored.Add(prevSquare);
+        prevColored.Add(newSquare);
+
+        prevSquare.SetPiece(null);
+        newSquare.SetPiece(piece);
+
+        piece.prevPosition = squarePos;
     }
 
     public Vector2Int SquareNumToCoords(int squareNum)

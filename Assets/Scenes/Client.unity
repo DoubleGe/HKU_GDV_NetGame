@@ -3254,6 +3254,9 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 4290828785
   boardSprite: {fileID: 7482667652216324306, guid: 0206aa64471e2af4cbcc44758a0842d9, type: 3}
+  moveColor:
+    serializedVersion: 2
+    rgba: 4284852589
   whitePiece: {fileID: -2184101838705875366, guid: b6baed811a6ecff47810d5a49c1a266a, type: 3}
   blackPiece: {fileID: -2184101838705875366, guid: dc1ae40d593c63540b16d863cf6a3d40, type: 3}
 --- !u!1 &699593949
