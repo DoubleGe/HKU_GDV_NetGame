@@ -76,6 +76,9 @@ namespace NetGame.Server
                     {
                         Debug.Log("SERVER: Client disconnected from the server.");
                         netConnection[i] = default;
+
+                        //Removes Client from client list
+                        ServerGlobalData.RemoveClient(i);
                         break;
                     }
                 }

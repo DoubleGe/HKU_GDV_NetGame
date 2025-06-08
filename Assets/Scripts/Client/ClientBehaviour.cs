@@ -19,7 +19,8 @@ namespace NetGame.Client
 
             netDriver = NetworkDriver.Create();
 
-            NetworkEndpoint endpoint = NetworkEndpoint.LoopbackIpv4.WithPort(7777);
+            //NetworkEndpoint endpoint = NetworkEndpoint.LoopbackIpv4.WithPort(7777);
+            NetworkEndpoint endpoint = NetworkEndpoint.Parse("192.168.2.18", 7777, NetworkFamily.Ipv4);
             netConnection = netDriver.Connect(endpoint);
         }
 
@@ -50,9 +51,6 @@ namespace NetGame.Client
                     byte value = stream.ReadByte();
 
                     packetHandlers[value]?.Invoke(stream);
-
-                    //netConnection.Disconnect(netDriver);
-                    //netConnection = default;
                 }
                 else if (cmd == NetworkEvent.Type.Disconnect)
                 {
@@ -88,6 +86,11 @@ namespace NetGame.Client
                 { (byte)ServerNetPacket.SEND_PIECE_PROMOTION, ClientHandle.PiecePromotion },
                 { (byte)ServerNetPacket.SEND_GAME_RESULT, ClientHandle.GetWinResult },
             };
+        }
+
+        private void OnApplicationQuit()
+        {
+            netConnection.Disconnect(netDriver);
         }
     }
 }
