@@ -157,18 +157,24 @@ namespace NetGame.Server
             if (blackPiecesList.Count == 0)
             {
                 ServerSend.SendGameResult(0, 1, true);
-                SendScoreResult(ServerGlobalData.clients[0].UID, whitePiecesList.Count);
+
+                List<ServerCheckerPiece> kingPieces = whitePiecesList.Where(p => p.isKing).ToList();
+
+                SendScoreResult(ServerGlobalData.clients[0].UID, whitePiecesList.Count, kingPieces.Count);
             }
             else if (whitePiecesList.Count == 0)
             {
                 ServerSend.SendGameResult(1, 0, false);
-                SendScoreResult(ServerGlobalData.clients[1].UID, blackPiecesList.Count);
+
+                List<ServerCheckerPiece> kingPieces = blackPiecesList.Where(p => p.isKing).ToList();
+
+                SendScoreResult(ServerGlobalData.clients[1].UID, blackPiecesList.Count, kingPieces.Count);
             }
         }
 
-        private async void SendScoreResult(int uid, int remainingPieces)
+        private async void SendScoreResult(int uid, int remainingPieces, int kingCount)
         {
-            ScoreSendRequest scoreRequest = new ScoreSendRequest(1, uid, remainingPieces * 100 + 1000);
+            ScoreSendRequest scoreRequest = new ScoreSendRequest(1, uid, remainingPieces * 100 + kingCount * 500 + 1000);
 
             Response resp = await RequestManager.SendRequestAsync<ScoreSendRequest, Response>(RequestManager.DEFAULT_URL + "AddScore.php", scoreRequest);
 
