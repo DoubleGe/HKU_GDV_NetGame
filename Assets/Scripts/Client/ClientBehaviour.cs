@@ -20,7 +20,7 @@ namespace NetGame.Client
             netDriver = NetworkDriver.Create();
 
             NetworkEndpoint endpoint = NetworkEndpoint.LoopbackIpv4.WithPort(7777);
-            //NetworkEndpoint endpoint = NetworkEndpoint.Parse("192.168.2.18", 7777, NetworkFamily.Ipv4);
+            //NetworkEndpoint endpoint = NetworkEndpoint.Parse("192.168.2.18", 7777, NetworkFamily.Ipv4); //IPV4 works tested it on local network.
             netConnection = netDriver.Connect(endpoint);
         }
 

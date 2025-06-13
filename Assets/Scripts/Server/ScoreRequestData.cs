@@ -1,19 +1,23 @@
 using UnityEngine;
 
-[System.Serializable]
-public class ScoreSendRequest
+
+namespace NetGame.Server
 {
-    public string SessionID;
-    public int gameID;
-    public int UID;
-    public int score;
-
-    public ScoreSendRequest(int gameID, int UID, int score)
+    [System.Serializable]
+    public class ScoreSendRequest
     {
-        SessionID = ServerGlobalData.sessionID;
+        public string SessionID;
+        public int gameID;
+        public int UID;
+        public int score;
 
-        this.gameID = gameID;
-        this.UID = UID;
-        this.score = score;
+        public ScoreSendRequest(int gameID, int UID, int score)
+        {
+            SessionID = ServerGlobalData.sessionID;
+
+            this.gameID = gameID;
+            this.UID = UID;
+            this.score = score;
+        }
     }
 }
