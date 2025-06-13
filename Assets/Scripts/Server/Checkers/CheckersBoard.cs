@@ -172,6 +172,26 @@ namespace NetGame.Server
             }
         }
 
+        public void NoMoveAvailableWinCondition(int clientID)
+        {
+            if (clientID == 0)
+            {
+                ServerSend.SendGameResult(1, 0, false);
+
+                List<ServerCheckerPiece> kingPieces = blackPiecesList.Where(p => p.isKing).ToList();
+
+                SendScoreResult(ServerGlobalData.clients[1].UID, blackPiecesList.Count, kingPieces.Count);
+            }
+            else if (clientID == 1)
+            {
+                ServerSend.SendGameResult(0, 1, true);
+
+                List<ServerCheckerPiece> kingPieces = whitePiecesList.Where(p => p.isKing).ToList();
+
+                SendScoreResult(ServerGlobalData.clients[0].UID, whitePiecesList.Count, kingPieces.Count);
+            }
+        }
+
         private async void SendScoreResult(int uid, int remainingPieces, int kingCount)
         {
             ScoreSendRequest scoreRequest = new ScoreSendRequest(1, uid, remainingPieces * 100 + kingCount * 500 + 1000);

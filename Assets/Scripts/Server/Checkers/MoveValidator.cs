@@ -70,17 +70,23 @@ namespace NetGame.Server
 
                 if (!CanJumpAgain(piece))
                 {
-                    whiteTurn = !whiteTurn;
-
-                    ServerSend.SendTurnInfo(whiteTurn);
+                    NextPlayerTurn();
+                    
                 }
             }
             else
             {
-                whiteTurn = !whiteTurn;
-
-                ServerSend.SendTurnInfo(whiteTurn);
+                NextPlayerTurn();
             }
+        }
+
+        private void NextPlayerTurn()
+        {
+            whiteTurn = !whiteTurn;
+            int nextPlayerID = whiteTurn ? 0 : 1;
+
+            if (!HasAnyValidMoves(nextPlayerID)) CheckersBoard.Instance.NoMoveAvailableWinCondition(nextPlayerID);
+            else ServerSend.SendTurnInfo(whiteTurn);
         }
 
         private bool IsValidMove(ServerCheckerPiece piece, Vector2Int targetPos, out bool isJump, out Vector2Int jumpedPiecePos)
@@ -172,7 +178,7 @@ namespace NetGame.Server
             int absX = Mathf.Abs(direction.x);
             int absY = Mathf.Abs(direction.y);
 
-            if (absX != absY) return false; 
+            if (absX != absY) return false;
 
             if (!piece.isKing)
             {
@@ -275,6 +281,87 @@ namespace NetGame.Server
             return false;
         }
 
+        private bool HasAnyValidMoves(int clientID)
+        {
+            ServerCheckerSquare[,] board = CheckersBoard.Instance.GetCheckerBoard();
+
+            foreach (var piece in CheckersBoard.Instance.GetAllPieces())
+            {
+                if (piece.ownerID != clientID) continue;
+
+                Vector2Int pos = piece.currentPosition;
+                bool isKing = piece.isKing;
+
+                List<Vector2Int> directions = new List<Vector2Int>
+                {
+                    new Vector2Int(1, 1),
+                    new Vector2Int(-1, 1),
+                    new Vector2Int(1, -1),
+                    new Vector2Int(-1, -1)
+                };
+
+                foreach (var dir in directions)
+                {
+                    if (!isKing)
+                    {
+                        // Normall
+                        Vector2Int target = pos + dir;
+                        if (IsInsideBoard(target))
+                        {
+                            ServerCheckerSquare square = board[target.x, target.y];
+                            if (square.Piece == null && square.AllowPlacement)
+                            {
+                                if (piece.ownerID == 0 && dir.y > 0) return true; // White
+                                if (piece.ownerID == 1 && dir.y < 0) return true; // Black
+                            }
+                        }
+
+                        // Jump
+                        Vector2Int middle = pos + dir;
+                        Vector2Int jump = pos + dir * 2;
+                        if (IsInsideBoard(jump))
+                        {
+                            ServerCheckerPiece midPiece = board[middle.x, middle.y].Piece;
+                            ServerCheckerSquare jumpSquare = board[jump.x, jump.y];
+                            if (midPiece != null && midPiece.ownerID != piece.ownerID &&
+                                jumpSquare.Piece == null && jumpSquare.AllowPlacement)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // King
+                        Vector2Int current = pos + dir;
+                        bool foundEnemy = false;
+
+                        while (IsInsideBoard(current))
+                        {
+                            var currentPiece = board[current.x, current.y].Piece;
+
+                            if (currentPiece != null)
+                            {
+                                if (currentPiece.ownerID == piece.ownerID) break;
+                                if (foundEnemy) break;
+                                foundEnemy = true;
+                                current += dir;
+                                continue;
+                            }
+
+                            if (foundEnemy && board[current.x, current.y].AllowPlacement)
+                                return true;
+                            else if (!foundEnemy && board[current.x, current.y].AllowPlacement)
+                                return true;
+
+                            current += dir;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
 
         private bool IsInsideBoard(Vector2Int pos)
         {
