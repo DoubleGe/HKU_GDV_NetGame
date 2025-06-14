@@ -75,10 +75,11 @@ namespace NetGame.Server
                     else if (cmd == NetworkEvent.Type.Disconnect)
                     {
                         Debug.Log("SERVER: Client disconnected from the server.");
-                        netConnection[i] = default;
 
                         //Removes Client from client list
                         ServerGlobalData.RemoveClient(i);
+                        netConnection.RemoveAtSwapBack(i);
+                        i--;
                         break;
                     }
                 }

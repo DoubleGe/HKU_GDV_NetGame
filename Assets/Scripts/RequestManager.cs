@@ -13,7 +13,7 @@ namespace NetGame.Server
         {
             WWWForm form = new WWWForm();
             form.AddField("request", JsonUtility.ToJson(requestData));
-            Debug.Log(JsonUtility.ToJson(requestData));
+
             using (UnityWebRequest www = UnityWebRequest.Post(url, form))
             {
                 await www.SendWebRequest();
@@ -24,7 +24,6 @@ namespace NetGame.Server
                 }
                 else
                 {
-                    Debug.Log(www.downloadHandler.text);
                     O data = JsonUtility.FromJson<O>(www.downloadHandler.text);
                     return data;
                 }

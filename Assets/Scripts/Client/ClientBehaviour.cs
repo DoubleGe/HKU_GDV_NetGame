@@ -90,7 +90,15 @@ namespace NetGame.Client
 
         private void OnApplicationQuit()
         {
-            netConnection.Disconnect(netDriver);
+            if (netConnection.IsCreated)
+            {
+                netConnection.Disconnect(netDriver);
+
+                netDriver.ScheduleUpdate().Complete();
+                System.Threading.Thread.Sleep(50); 
+
+                netConnection.Disconnect(netDriver);
+            }
         }
     }
 }
