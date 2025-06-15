@@ -112,7 +112,7 @@ namespace NetGame.Server
             {
                 if (client == clientExclude) continue;
 
-                DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
+                DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client, SendType.UDP);
                 writer.WriteByte((byte)ServerNetPacket.SEND_PIECE_POSTION_TO_OTHER);
 
                 //Data
@@ -127,6 +127,7 @@ namespace NetGame.Server
         {
             foreach (int client in ServerGlobalData.clients.Keys)
             {
+
                 DataStreamWriter writer = ServerBehaviour.Instance.StartNewStream(client);
                 writer.WriteByte((byte)ServerNetPacket.SEND_PLAYER_TURN);
 

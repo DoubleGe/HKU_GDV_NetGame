@@ -5,6 +5,12 @@ using Unity.Networking.Transport;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum SendType
+{
+    TCP,
+    UDP
+}
+
 namespace NetGame.Server
 {
     public class ServerBehaviour : GenericSingleton<ServerBehaviour>
@@ -14,6 +20,9 @@ namespace NetGame.Server
 
         private delegate void PacketHandler(DataStreamReader reader, int client);
         private static Dictionary<byte, PacketHandler> packetHandlers;
+
+        private NetworkPipeline TCPPipeline;
+        private NetworkPipeline UDPPipeline;
 
         void Start()
         {
@@ -29,6 +38,9 @@ namespace NetGame.Server
                 return;
             }
             netDriver.Listen();
+
+            TCPPipeline = netDriver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
+            UDPPipeline = netDriver.CreatePipeline(typeof(UnreliableSequencedPipelineStage));
         }
 
         private void OnDestroy()
@@ -86,9 +98,9 @@ namespace NetGame.Server
             }
         }
 
-        public DataStreamWriter StartNewStream(int playerID)
+        public DataStreamWriter StartNewStream(int playerID, SendType sendType = SendType.TCP)
         {
-            netDriver.BeginSend(netConnection[playerID], out var writer);
+            netDriver.BeginSend((sendType == SendType.TCP ? TCPPipeline : UDPPipeline), netConnection[playerID], out var writer);
             return writer;
         }
 

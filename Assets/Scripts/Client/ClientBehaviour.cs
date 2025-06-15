@@ -13,6 +13,9 @@ namespace NetGame.Client
         private delegate void PacketHandler(DataStreamReader reader);
         private static Dictionary<byte, PacketHandler> packetHandlers;
 
+        private NetworkPipeline TCPPipeline;
+        private NetworkPipeline UDPPipeline;
+
         private void Start()
         {
             PacketInitialize();
@@ -22,6 +25,9 @@ namespace NetGame.Client
             NetworkEndpoint endpoint = NetworkEndpoint.LoopbackIpv4.WithPort(7777);
             //NetworkEndpoint endpoint = NetworkEndpoint.Parse("192.168.2.18", 7777, NetworkFamily.Ipv4); //IPV4 works tested it on local network.
             netConnection = netDriver.Connect(endpoint);
+
+            TCPPipeline = netDriver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
+            UDPPipeline = netDriver.CreatePipeline(typeof(UnreliableSequencedPipelineStage));
         }
 
         private void OnDestroy()
@@ -59,9 +65,9 @@ namespace NetGame.Client
             }
         }
 
-        public DataStreamWriter StartNewStream(ClientNetPacket netPacket)
+        public DataStreamWriter StartNewStream(ClientNetPacket netPacket, SendType sendType = SendType.TCP)
         {
-            netDriver.BeginSend(netConnection, out var writer);
+            netDriver.BeginSend((sendType == SendType.TCP ? TCPPipeline : UDPPipeline), netConnection, out var writer);
             writer.WriteByte((byte)netPacket);
 
             return writer;

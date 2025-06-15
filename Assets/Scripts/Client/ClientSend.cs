@@ -30,7 +30,7 @@ namespace NetGame.Client
 
         public static void SendPiecePosition(int pieceID, Vector2 piecePosition)
         {
-            DataStreamWriter writer = ClientBehaviour.Instance.StartNewStream(ClientNetPacket.SEND_PIECE_POSITION);
+            DataStreamWriter writer = ClientBehaviour.Instance.StartNewStream(ClientNetPacket.SEND_PIECE_POSITION, SendType.UDP);
 
             writer.WriteInt(pieceID);
             writer.WriteVector2(piecePosition);
