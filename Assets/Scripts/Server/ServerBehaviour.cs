@@ -37,6 +37,7 @@ namespace NetGame.Server
                 Debug.LogError("SERVER: Failed to bind to port 7777.");
                 return;
             }
+
             netDriver.Listen();
 
             TCPPipeline = netDriver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
